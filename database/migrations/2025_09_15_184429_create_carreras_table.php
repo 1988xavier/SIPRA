@@ -23,8 +23,9 @@ return new class extends Migration
             $table->longText('competencias')->nullable();
             $table->longText('requisitos')->nullable();
           
-            $table->string('video')->nullable();
-            $table->json('imagen')->nullable();
+            $table->string('video_url')->nullable();
+            $table->json('imagenes')->nullable();
+            $table->unsignedInteger('capacidad')->nullable();
             $table->unsignedBigInteger('vistas')->default(0);
             $table->boolean('activo')->default(true);
             $table->timestamps();

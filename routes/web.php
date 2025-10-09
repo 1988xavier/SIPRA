@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdministradorController;
 use App\Http\Controllers\Admin\CalendarioController;
 use App\Http\Controllers\Admin\CarreraAdminController;
 use App\Http\Controllers\Auth\AspiranteAuthController;
+use App\Http\Controllers\Admin\DashboardController;
 
 // Página principal -> redirige al login
 Route::get('/', function () {
@@ -54,9 +55,9 @@ Route::middleware(['auth.aspirante'])->group(function () {
 // ========================================
 
 // Dashboard (para cualquier usuario logueado/verificado)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 // Perfil de usuario
 Route::middleware('auth')->group(function () {
@@ -71,22 +72,43 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->group(function () {
     // Gestión de aspirantes
-    Route::resource('aspirantes', AspiranteAdminController::class);
+    Route::resource('aspirantes', AspiranteAdminController::class)
+        ->names('admin.aspirantes');
     
     // Gestión de carreras
-    Route::resource('carreras', CarreraAdminController::class);
+    Route::resource('carreras', CarreraAdminController::class)
+        ->names('admin.carreras');
+
+    // Eliminar multimedia individual
+    Route::delete('/carreras/multimedia/{media}', [CarreraAdminController::class, 'destroyMultimedia'])
+        ->name('admin.carreras.multimedia.destroy');
     
     // Gestión de administradores
-    Route::resource('administradores', AdministradorController::class)->except(['show', 'edit', 'update']);
+    Route::resource('administradores', AdministradorController::class)
+        ->except(['show', 'edit', 'update'])
+        ->names('admin.administradores');
     Route::patch('/administradores/{user}/estado', [AdministradorController::class, 'updateEstado'])
-        ->name('administradores.updateEstado');
-    
+        ->name('admin.administradores.updateEstado');
+
     // Reportes
-    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
-    
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('admin.reportes.index');
+
     // Calendario
-    Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
-    Route::post('/calendario', [CalendarioController::class, 'store'])->name('calendario.store');
+    Route::get('/calendario', [CalendarioController::class, 'index'])->name('admin.calendario.index');
+    Route::post('/calendario', [CalendarioController::class, 'store'])->name('admin.calendario.store');
 });
+
+// Reportes
+Route::get('/reportes', [ReporteController::class, 'index'])->name('admin.reportes.index');
+Route::post('/reportes/exportar', [ReporteController::class, 'exportar'])->name('admin.reportes.exportar');
+
+// web.php
+Route::patch('/admin/aspirantes/{aspirante}/status', [AspiranteAdminController::class, 'updateStatus'])->name('admin.aspirantes.updateStatus');
+
+
+
+Route::delete('/admin/aspirantes/{aspirante}', [AspiranteAdminController::class, 'destroy'])
+     ->name('admin.aspirantes.destroy');
+
 
 require __DIR__.'/auth.php';

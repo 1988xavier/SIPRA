@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Carrera;
+use App\Models\CarreraMultimedia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class CarreraAdminController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->string('q')->toString();
-
         $query = Carrera::query();
 
         if ($search !== '') {
@@ -20,8 +21,7 @@ class CarreraAdminController extends Controller
                   ->orWhere('descripcion', 'like', "%{$search}%");
         }
 
-        $carreras = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
-
+        $carreras = $query->with(['multimedia'])->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
         return view('admin.carreras.index', compact('carreras', 'search'));
     }
 
@@ -41,34 +41,42 @@ class CarreraAdminController extends Controller
             'desarrollo_profesional' => 'nullable|string',
             'competencias' => 'nullable|string',
             'requisitos' => 'nullable|string',
-            'imagen' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
-            'video'  => 'nullable|file|mimes:mp4,avi,mov|max:102400',
+            'imagenes.*' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
+            'videos.*'  => 'nullable|file|mimes:mp4,avi,mov|max:102400',
         ]);
 
-        $data = $request->except(['imagen', 'video']);
-
-        // Crear slug automáticamente
+        $data = $request->except(['imagenes', 'videos']);
         $data['slug'] = Str::slug($request->nombre);
+        $carrera = Carrera::create($data);
 
-        // Guardar imagen en JSON
-        if ($request->hasFile('imagen')) {
-            $data['imagenes'] = json_encode([
-                $request->file('imagen')->store('carreras/imagenes', 'public')
-            ]);
+        // Guardar imágenes
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $file) {
+                $ruta = $file->store('carreras/imagenes', 'public');
+                $carrera->multimedia()->create([
+                    'tipo' => 'imagen',
+                    'ruta' => $ruta,
+                ]);
+            }
         }
 
-        // Guardar video en video_url
-        if ($request->hasFile('video')) {
-            $data['video_url'] = $request->file('video')->store('carreras/videos', 'public');
+        // Guardar videos
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $file) {
+                $ruta = $file->store('carreras/videos', 'public');
+                $carrera->multimedia()->create([
+                    'tipo' => 'video',
+                    'ruta' => $ruta,
+                ]);
+            }
         }
-
-        Carrera::create($data);
 
         return redirect()->route('admin.carreras.index')->with('success', 'Carrera creada correctamente');
     }
 
     public function edit(Carrera $carrera)
     {
+        $carrera->load('multimedia');
         return view('admin.carreras.edit', compact('carrera'));
     }
 
@@ -83,36 +91,63 @@ class CarreraAdminController extends Controller
             'desarrollo_profesional' => 'nullable|string',
             'competencias' => 'nullable|string',
             'requisitos' => 'nullable|string',
-            'imagen' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
-            'video'  => 'nullable|file|mimes:mp4,avi,mov|max:102400',
+            'imagenes.*' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
+            'videos.*'  => 'nullable|file|mimes:mp4,avi,mov|max:102400',
         ]);
 
-        $data = $request->except(['imagen', 'video']);
-
-        // Actualizar slug si cambia el nombre
+        $data = $request->except(['imagenes', 'videos']);
         $data['slug'] = Str::slug($request->nombre);
-
-        // Si hay nueva imagen, reemplaza el JSON
-        if ($request->hasFile('imagen')) {
-            $data['imagenes'] = json_encode([
-                $request->file('imagen')->store('carreras/imagenes', 'public')
-            ]);
-        }
-
-        // Si hay nuevo video, lo reemplaza
-        if ($request->hasFile('video')) {
-            $data['video_url'] = $request->file('video')->store('carreras/videos', 'public');
-        }
-
         $carrera->update($data);
+
+        // Agregar nuevas imágenes
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $file) {
+                $ruta = $file->store('carreras/imagenes', 'public');
+                $carrera->multimedia()->create([
+                    'tipo' => 'imagen',
+                    'ruta' => $ruta,
+                ]);
+            }
+        }
+
+        // Agregar nuevos videos
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $file) {
+                $ruta = $file->store('carreras/videos', 'public');
+                $carrera->multimedia()->create([
+                    'tipo' => 'video',
+                    'ruta' => $ruta,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.carreras.index')->with('success', 'Carrera actualizada correctamente');
     }
 
     public function destroy(Carrera $carrera)
     {
-        $carrera->delete();
+        // Opcional: eliminar archivos físicos
+        foreach ($carrera->multimedia as $media) {
+            Storage::disk('public')->delete($media->ruta);
+        }
 
+        $carrera->delete();
         return redirect()->route('admin.carreras.index')->with('success', 'Carrera eliminada correctamente');
     }
+
+
+
+    // Eliminar una imagen o video individual
+    public function destroyMultimedia(CarreraMultimedia $media)
+    {
+        // Eliminar el archivo físico
+        Storage::disk('public')->delete($media->ruta);
+
+        // Eliminar registro de la base de datos
+        $media->delete();
+
+        // Respuesta JSON para AJAX
+        return response()->json(['success' => true]);
+    }
+
 }

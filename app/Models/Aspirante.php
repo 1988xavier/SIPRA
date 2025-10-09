@@ -29,10 +29,12 @@ class Aspirante extends Model
         'password',
     ];
 
-    // Relación: un aspirante puede elegir varias carreras
+    // Relación: un aspirante puede elegir varias carreras con prioridad
     public function carreras()
     {
-        return $this->belongsToMany(Carrera::class, 'aspirante_carrera')->withTimestamps();
+        return $this->belongsToMany(Carrera::class, 'aspirante_carrera')
+            ->withPivot('prioridad')
+            ->withTimestamps();
     }
 
     // Relación: carrera principal

@@ -21,17 +21,23 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
 
-            $table->enum('status', ['proceso', 'aceptado', 'rechazado'])->default('proceso');
+            // 🔧 Aquí agregué los nuevos estados
+            $table->enum('status', [
+                'proceso',
+                'contactado',
+                'registrado',
+                'no_registrado'
+            ])->default('proceso');
 
             $table->boolean('accepted_terms')->default(false);
             $table->timestamp('verified_at')->nullable();
 
             $table->timestamps();
 
-            // database/migrations/xxxx_xx_xx_create_aspirantes_table.php
             $table->unsignedBigInteger('carrera_principal_id')->nullable();
-            $table->foreign('carrera_principal_id')->references('id')->on('carreras')->onDelete('set null');
-
+            $table->foreign('carrera_principal_id')
+                  ->references('id')->on('carreras')
+                  ->onDelete('set null');
         });
     }
 

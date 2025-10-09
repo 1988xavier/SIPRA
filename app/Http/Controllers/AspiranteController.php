@@ -16,35 +16,36 @@ class AspiranteController extends Controller
 
     public function store(Request $request)
     {
+        // Validación
         $request->validate([
-            'nombre'            => 'required|string|max:255',
-            'apellido_paterno'  => 'required|string|max:255',
-            'apellido_materno'  => 'nullable|string|max:255',
-            'fecha_nacimiento'  => 'nullable|date',
-            'escuela_procedencia' => 'nullable|string|max:255',
-            'telefono'          => 'nullable|string|max:20',
-            'email'             => 'required|email|unique:aspirantes,email',
-            'password'          => 'required|string|min:6',
-            'carreras'          => 'required|array|max:3',
-            'carreras.*'        => 'exists:carreras,id',
+            'nombre'               => 'required|string|max:100',
+            'apellido_paterno'     => 'required|string|max:100',
+            'apellido_materno'     => 'nullable|string|max:100',
+            'telefono'             => 'required|string|max:20',
+            'email'                => 'required|email|unique:aspirantes,email',
+            'carrera_principal_id' => 'required|exists:carreras,id',
+            'destacamientos'       => 'nullable|string',
         ]);
 
+        // Crear aspirante sin contraseña
         $aspirante = Aspirante::create([
-            'nombre'            => $request->nombre,
-            'apellido_paterno'  => $request->apellido_paterno,
-            'apellido_materno'  => $request->apellido_materno,
-            'fecha_nacimiento'  => $request->fecha_nacimiento,
-            'escuela_procedencia' => $request->escuela_procedencia,
-            'telefono'          => $request->telefono,
-            'email'             => $request->email,
-            'password'          => $request->password, // se encripta automático por el mutator
-            'status'            => 'proceso',
-            'accepted_terms'    => true,
+            'nombre'               => $request->nombre,
+            'apellido_paterno'     => $request->apellido_paterno,
+            'apellido_materno'     => $request->apellido_materno,
+            'telefono'             => $request->telefono,
+            'email'                => $request->email,
+            'carrera_principal_id' => $request->carrera_principal_id,   
+            'destacamientos'       => $request->destacamientos,
+            'status'               => 'proceso',
+            'accepted_terms'       => true,
         ]);
 
-        $aspirante->carreras()->sync($request->carreras);
-
-        return redirect()->route('aspirantes.create.public')
-                         ->with('success', 'Tu pre-registro se ha enviado correctamente. La universidad se pondrá en contacto contigo.');
+        return redirect()->route('admin.aspirantes.create')
+                         ->with('success', 'El aspirante se ha registrado correctamente.');
     }
+
+
+
+
+
 }

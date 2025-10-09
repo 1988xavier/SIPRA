@@ -8,67 +8,114 @@
         @csrf
         @method('PUT')
 
+        {{-- Fila 1: Nombre --}}
         <div>
             <label class="block text-sm font-medium">Nombre de la Carrera</label>
             <input type="text" name="nombre" value="{{ old('nombre', $carrera->nombre) }}" class="w-full border rounded p-2" required>
         </div>
 
+        {{-- Fila 2: Descripción y Perfil de Ingreso --}}
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium">Descripción</label>
                 <textarea name="descripcion" class="w-full border rounded p-2" rows="2">{{ old('descripcion', $carrera->descripcion) }}</textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium">Objetivo</label>
+                <label class="block text-sm font-medium">Perfil de Ingreso</label>
                 <textarea name="objetivo" class="w-full border rounded p-2" rows="2">{{ old('objetivo', $carrera->objetivo) }}</textarea>
             </div>
+        </div>
+
+        {{-- Fila 3: Perfil de Egreso y Plan de Estudio --}}
+        <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium">Perfil</label>
+                <label class="block text-sm font-medium">Perfil de Egreso</label>
                 <textarea name="perfil" class="w-full border rounded p-2" rows="2">{{ old('perfil', $carrera->perfil) }}</textarea>
             </div>
             <div>
                 <label class="block text-sm font-medium">Plan de Estudio</label>
                 <textarea name="plan_estudio" class="w-full border rounded p-2" rows="2">{{ old('plan_estudio', $carrera->plan_estudio) }}</textarea>
             </div>
+        </div>
+
+        {{-- Fila 4: Desarrollo Profesional y Requisitos --}}
+        <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium">Desarrollo Profesional</label>
                 <textarea name="desarrollo_profesional" class="w-full border rounded p-2" rows="2">{{ old('desarrollo_profesional', $carrera->desarrollo_profesional) }}</textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium">Competencias</label>
-                <textarea name="competencias" class="w-full border rounded p-2" rows="2">{{ old('competencias', $carrera->competencias) }}</textarea>
+                <label class="block text-sm font-medium">Requisitos</label>
+                <textarea name="requisitos" class="w-full border rounded p-2" rows="2">{{ old('requisitos', $carrera->requisitos) }}</textarea>
             </div>
         </div>
 
+        
+
+        {{-- Imágenes actuales --}}
         <div>
-            <label class="block text-sm font-medium">Requisitos</label>
-            <textarea name="requisitos" class="w-full border rounded p-2">{{ old('requisitos', $carrera->requisitos) }}</textarea>
+            <label class="block text-sm font-medium">Imágenes actuales</label>
+            <div class="flex gap-2 flex-wrap mb-2 overflow-x-auto">
+                @foreach($carrera->imagenes()->get() as $img)
+                    <div class="relative media-item">
+                        <img src="{{ asset('storage/'.$img->ruta) }}" alt="Imagen carrera" class="h-24 rounded flex-shrink-0">
+                        <button type="button"
+                                onclick="deleteMedia({{ $img->id }}, this)"
+                                class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-700">
+                            &times;
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+            <input type="file" name="imagenes[]" multiple class="w-full border rounded p-2">
         </div>
 
+        {{-- Videos actuales --}}
         <div>
-            <label class="block text-sm font-medium">Capacidad</label>
-            <input type="number" name="capacidad" value="{{ old('capacidad', $carrera->capacidad) }}" class="w-full border rounded p-2">
+            <label class="block text-sm font-medium">Videos actuales</label>
+            <div class="flex gap-2 flex-wrap mb-2 overflow-x-auto">
+                @foreach($carrera->videos()->get() as $video)
+                    <div class="relative media-item">
+                        <video controls src="{{ asset('storage/'.$video->ruta) }}" class="h-24 rounded flex-shrink-0"></video>
+                        <button type="button"
+                                onclick="deleteMedia({{ $video->id }}, this)"
+                                class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-700">
+                            &times;
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+            <input type="file" name="videos[]" multiple class="w-full border rounded p-2">
         </div>
 
-        <div>
-            <label class="block text-sm font-medium">Imagen actual</label>
-            @if($carrera->imagen)
-                <img src="{{ asset('storage/'.$carrera->imagen) }}" alt="Imagen carrera" class="h-24 mb-2">
-            @endif
-            <input type="file" name="imagen" class="w-full border rounded p-2">
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium">Video actual</label>
-            @if($carrera->video)
-                <video src="{{ asset('storage/'.$carrera->video) }}" controls class="h-24 mb-2"></video>
-            @endif
-            <input type="file" name="video" class="w-full border rounded p-2">
-        </div>
-
+        {{-- Botones de formulario --}}
         <div class="flex justify-end gap-3">
             <a href="{{ route('admin.carreras.index') }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Cancelar</a>
             <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Actualizar</button>
         </div>
     </form>
+
+    <script>
+        function deleteMedia(id, button) {
+            if(!confirm('¿Deseas eliminar este archivo?')) return;
+
+            fetch(`/admin/carreras/multimedia/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    button.closest('.media-item').remove();
+                } else {
+                    alert('No se pudo eliminar. Intenta de nuevo.');
+                }
+            })
+            .catch(() => alert('Error de conexión.'));
+        }
+    </script>
+
 </x-admin-layout>

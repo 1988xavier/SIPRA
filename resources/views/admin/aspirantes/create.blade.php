@@ -26,14 +26,12 @@
                 @error('apellido_materno') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
             </div>
 
-
             <div class="mb-4">
                 <label class="block text-sm font-medium">Correo</label>
-                <input type="email" name="email" value="{{ old('correo') }}" required
+                <input type="email" name="email" value="{{ old('email') }}" required
                     class="w-full border rounded px-3 py-2">
-                @error('correo') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                @error('email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
             </div>
-
 
             <div class="mb-4">
                 <label class="block text-sm font-medium">Teléfono</label>
@@ -42,18 +40,20 @@
                 @error('telefono') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
             </div>
 
-
+            {{-- NUEVO: Fecha de nacimiento --}}
             <div class="mb-4">
-                <label class="block text-sm font-medium">Contraseña</label>
-                <input type="password" name="password" required
-                    class="w-full border rounded px-3 py-2">
-                @error('password') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                <label class="block text-sm font-medium">Fecha de nacimiento</label>
+                <input type="date" name="fecha_nacimiento" value="{{ old('fecha_nacimiento') }}"
+                       class="w-full border rounded px-3 py-2">
+                @error('fecha_nacimiento') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
             </div>
 
+            {{-- NUEVO: Escuela de procedencia --}}
             <div class="mb-4">
-                <label class="block text-sm font-medium">Confirmar contraseña</label>
-                <input type="password" name="password_confirmation" required
-                    class="w-full border rounded px-3 py-2">
+                <label class="block text-sm font-medium">Escuela de procedencia</label>
+                <input type="text" name="escuela_procedencia" value="{{ old('escuela_procedencia') }}"
+                       class="w-full border rounded px-3 py-2">
+                @error('escuela_procedencia') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
             </div>
 
             <div class="mb-4">
