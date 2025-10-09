@@ -76,14 +76,7 @@
 
                 {{-- Estado y acciones en la misma fila --}}
                 <div class="mt-2 flex justify-between items-center">
-                    {{-- Estado a la izquierda --}}
-                    <div>
-                        @if($c->activo)
-                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">Activo</span>
-                        @else
-                            <span class="px-3 py-1 rounded-full text-xs bg-gray-200 text-gray-600">Inactivo</span>
-                        @endif
-                    </div>
+                    
 
                     {{-- Botones a la derecha --}}
                     <div class="flex gap-2">

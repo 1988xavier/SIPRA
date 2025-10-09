@@ -1,6 +1,6 @@
 <x-admin-layout>
     <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-6">Agregar Nuevo Administrador</h1>
+        <h1 class="text-2xl font-bold mb-6">Agregar Nuevo Coordinador</h1>
 
         <form action="{{ route('admin.administradores.store') }}" method="POST" class="space-y-4">
             @csrf
@@ -28,8 +28,7 @@
             <div>
                 <label class="block text-sm font-medium">Rol</label>
                 <select name="role" class="w-full border rounded p-2" required>
-                    <option value="admin">Administrador</option>
-                    <option value="editor">Editor</option>
+                    <option value="coordinador">Coordinador</option>
                 </select>
             </div>
 

@@ -96,6 +96,17 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->group(func
     // Calendario
     Route::get('/calendario', [CalendarioController::class, 'index'])->name('admin.calendario.index');
     Route::post('/calendario', [CalendarioController::class, 'store'])->name('admin.calendario.store');
+
+    // 📅 Nuevo: Calendario de aspirantes
+Route::get('/calendario-aspirantes', [CalendarioAspiranteController::class, 'index'])->name('admin.calendario_aspirantes.index');
+Route::post('/calendario-aspirantes', [CalendarioAspiranteController::class, 'store'])->name('admin.calendario_aspirantes.store');
+
+// Calendario de aspirantes (nuevo)
+Route::get('/calendario-aspirantes', [\App\Http\Controllers\Admin\CalendarioAspiranteController::class, 'index'])
+    ->name('admin.calendario_aspirantes.index');
+Route::post('/calendario-aspirantes', [\App\Http\Controllers\Admin\CalendarioAspiranteController::class, 'store'])
+    ->name('admin.calendario_aspirantes.store');
+
 });
 
 // Reportes
@@ -109,6 +120,40 @@ Route::patch('/admin/aspirantes/{aspirante}/status', [AspiranteAdminController::
 
 Route::delete('/admin/aspirantes/{aspirante}', [AspiranteAdminController::class, 'destroy'])
      ->name('admin.aspirantes.destroy');
+
+
+
+
+     Route::post('/admin/aspirantes/{aspirante}/correo', [AspiranteAdminController::class, 'enviarCorreo'])
+    ->name('admin.aspirantes.enviarCorreo');
+
+
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('reportes', [\App\Http\Controllers\Admin\ReporteController::class, 'index'])->name('reportes.index');
+    Route::post('reportes/exportar', [\App\Http\Controllers\Admin\ReporteController::class, 'exportar'])->name('reportes.exportar');
+});
+
+
+
+// ========================================
+// RUTAS PARA COORDINADORES
+// ========================================
+Route::middleware(['auth', 'verified'])
+    ->prefix('coordinador')
+    ->name('coordinador.')
+    ->group(function () {
+
+        // Reportes (solo lectura)
+        Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+
+        // Calendario (solo lectura)
+        Route::get('/calendario', [CalendarioController::class, 'index'])->name('calendario.index');
+    });
+
+
+Route::get('/calendario-academico', [\App\Http\Controllers\CalendarioAspirantePublicController::class, 'index'])
+    ->name('calendario.academico');
 
 
 require __DIR__.'/auth.php';

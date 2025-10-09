@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Aspirante;
 use App\Models\Carrera;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AvisoAspiranteMail;
+use App\Models\HistorialContacto;
 
 class AspiranteAdminController extends Controller
 {
@@ -100,5 +103,36 @@ public function create()
     return redirect()->route('admin.aspirantes.index')
                      ->with('success', 'Aspirante eliminado correctamente.');
 }
+
+
+
+
+
+public function enviarCorreo(Request $request, Aspirante $aspirante)
+{
+    $request->validate([
+        'mensaje' => 'required|string|max:1000',
+    ]);
+
+    Mail::to($aspirante->email)->send(new AvisoAspiranteMail(
+        $aspirante->nombre,
+        $request->mensaje
+    ));
+
+
+    HistorialContacto::create([
+    'aspirante_id' => $aspirante->id,
+    'tipo' => 'correo',
+    'mensaje' => $request->mensaje,
+]);
+
+    return back()->with('success', 'Correo enviado correctamente a ' . $aspirante->email);
+
+
+
+    
+}
+
+
 
 }

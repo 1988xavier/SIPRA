@@ -22,10 +22,17 @@ class AspiranteController extends Controller
             'apellido_paterno'     => 'required|string|max:100',
             'apellido_materno'     => 'nullable|string|max:100',
             'telefono'             => 'required|string|max:20',
-            'email'                => 'required|email|unique:aspirantes,email',
+            'email'                => 'required|email',
             'carrera_principal_id' => 'required|exists:carreras,id',
             'destacamientos'       => 'nullable|string',
         ]);
+
+        // Verificar si el correo ya se ha usado 3 veces
+        $count = Aspirante::where('email', $request->email)->count();
+
+        if ($count >= 3) {
+            return back()->with('error', 'Ya has registrado el máximo de 3 carreras permitidas.')->withInput();
+        }
 
         // Crear aspirante sin contraseña
         $aspirante = Aspirante::create([
@@ -34,7 +41,7 @@ class AspiranteController extends Controller
             'apellido_materno'     => $request->apellido_materno,
             'telefono'             => $request->telefono,
             'email'                => $request->email,
-            'carrera_principal_id' => $request->carrera_principal_id,   
+            'carrera_principal_id' => $request->carrera_principal_id,
             'destacamientos'       => $request->destacamientos,
             'status'               => 'proceso',
             'accepted_terms'       => true,
@@ -43,9 +50,4 @@ class AspiranteController extends Controller
         return redirect()->route('admin.aspirantes.create')
                          ->with('success', 'El aspirante se ha registrado correctamente.');
     }
-
-
-
-
-
 }
