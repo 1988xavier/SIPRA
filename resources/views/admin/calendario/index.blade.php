@@ -120,7 +120,7 @@
 
         <!-- Próximos eventos -->
 <div>
-    <h3 class="text-lg font-bold mb-3">Próximos Eventos De Promocion Academica</h3>
+    <h3 class="text-lg font-bold mb-3">Próximos Eventos De Promocion Academicax</h3>
     <div class="space-y-3">
         @forelse($proximos as $p)
             <div class="bg-white border rounded-lg p-4 shadow-sm text-sm leading-snug">

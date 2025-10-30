@@ -156,4 +156,10 @@ Route::get('/calendario-academico', [\App\Http\Controllers\CalendarioAspirantePu
     ->name('calendario.academico');
 
 
+    // Página de bienvenida para QR
+Route::get('/bienvenida', function () {
+    return view('aspirantes.bienvenida');
+})->name('aspirantes.bienvenida');
+
+
 require __DIR__.'/auth.php';
