@@ -52,9 +52,24 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium">Videos de la Carrera</label>
-            <input type="file" name="video" class="w-full border rounded p-2">
-        </div>
+    <label class="block text-sm font-medium">Enlace de Video (YouTube)</label>
+    <input type="url" name="video_url" class="w-full border rounded p-2" placeholder="https://youtu.be/xyz123">
+
+    <p class="text-xs text-gray-500 mt-1">
+        Puedes pegar un enlace de YouTube. Ejemplo: https://youtu.be/ABC123  
+        (Recomendado para videos largos)
+    </p>
+</div>
+
+<div>
+    <label class="block text-sm font-medium">Subir video (opcional)</label>
+    <input type="file" name="videos[]" class="w-full border rounded p-2" accept="video/mp4">
+
+    <p class="text-xs text-gray-500 mt-1">
+        Solo MP4 y menor a 10MB. Si es más grande, usa YouTube.
+    </p>
+</div>
+
 
         <div class="flex justify-end gap-3">
             <a href="{{ route('admin.carreras.index') }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Cancelar</a>

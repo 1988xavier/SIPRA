@@ -50,4 +50,50 @@ class AspiranteController extends Controller
         return redirect()->route('admin.aspirantes.create')
                          ->with('success', 'El aspirante se ha registrado correctamente.');
     }
+
+
+
+    public function form(\App\Models\Carrera $carrera)
+{
+    return view('aspirantes.pre_registro', compact('carrera'));
+}
+
+
+
+
+public function guardar(Request $request)
+{
+    $request->validate([
+        'nombre' => 'required|string|max:100',
+        'apellido_paterno' => 'required|string|max:100',
+        'apellido_materno' => 'nullable|string|max:100',
+        'telefono' => 'required|string|max:20',
+        'email' => 'required|email',
+        'escuela_procedencia' => 'nullable|string',
+        'carrera_principal_id' => 'required|exists:carreras,id',
+    ]);
+
+    Aspirante::create([
+        'nombre' => $request->nombre,
+        'apellido_paterno' => $request->apellido_paterno,
+        'apellido_materno' => $request->apellido_materno,
+        'telefono' => $request->telefono,
+        'email' => $request->email,
+        'escuela_procedencia' => $request->escuela_procedencia,
+        'carrera_principal_id' => $request->carrera_principal_id,
+        'status' => 'proceso',
+        'accepted_terms' => true,
+    ]);
+
+   return redirect()->route('pre.registro.exito');
+
+
+}
+
+public function exito()
+{
+    return view('aspirantes.registro_exitoso');
+}
+
+
 }

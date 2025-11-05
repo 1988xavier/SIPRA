@@ -162,4 +162,19 @@ Route::get('/bienvenida', function () {
 })->name('aspirantes.bienvenida');
 
 
+
+// Pre-registro de aspirante desde una carrera
+Route::get('/pre-registro/{carrera}', [AspiranteController::class, 'form'])
+    ->name('pre.registro');
+
+Route::post('/pre-registro/guardar', [AspiranteController::class, 'guardar'])
+    ->name('pre.registro.guardar');   
+
+
+
+
+Route::get('/pre-registro-exitoso', [AspiranteController::class, 'exito'])
+    ->name('pre.registro.exito');
+
+
 require __DIR__.'/auth.php';

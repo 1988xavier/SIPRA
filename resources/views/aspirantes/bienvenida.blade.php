@@ -2,78 +2,96 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#003366">
     <title>Bienvenida - UPB</title>
+
     @vite(['resources/css/app.css'])
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Fondo con degradado suave */
-        body {
-            background: linear-gradient(180deg, #003366 0%, #0066cc 100%);
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(6px);} 
+            to { opacity:1; transform:translateY(0);} 
+        }
+
+        body { 
+            -webkit-font-smoothing:antialiased; 
+            -moz-osx-font-smoothing:grayscale; 
+        }
+
+        /* Logo directo sin fondo circular */
+        .logo-wrap {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
-            color: white;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
         }
 
-        img {
-            width: 160px;
-            margin-bottom: 25px;
-            animation: fadeIn 1.5s ease-in-out;
+        .logo-wrap img {
+            width: 90vw;       /* más grande en móvil */
+            max-width: 320px;  /* tamaño grande en desktops */
+            height: auto;
+            display: block;
+            animation: fadeIn .6s ease both;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            animation: slideDown 1.2s ease-in-out;
-        }
-
-        p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 35px;
-            animation: fadeIn 2s ease-in-out;
-        }
-
-        a {
-            background: white;
-            color: #003366;
-            padding: 12px 50px;
-            border-radius: 25px;
+        .title {
+            margin-top: .9rem;
             font-weight: 600;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
+            color: #0b2540;
+            font-size: 1.05rem;
+            text-align: center;
         }
-
-        a:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
+        .subtitle {
+            margin-top: .45rem;
+            color: #0f2b4a;
+            text-align: center;
+            opacity: .95;
+            font-size: .95rem;
         }
-
-        /* Animaciones */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .cta {
+            display:block;
+            width:100%;
+            max-width: 420px;
+            margin: 1rem auto 0;
+            text-align:center;
+            padding: .85rem 1rem;
+            border-radius: 9999px;
+            background: #003366;
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0,50,102,0.14);
         }
     </style>
 </head>
-<body>
 
-    <img src="{{ asset('images/logo_upb.png') }}" alt="Logo UPB">
+<body class="min-h-screen bg-white font-sans relative overflow-auto">
 
-    <h1>Universidad Politécnica de Bacalar</h1>
-    <p>“Formando profesionales con visión, liderazgo e innovación.”</p>
+<main 
+    class="min-h-screen flex flex-col items-center justify-center px-4 safe-area-inset" 
+    style="margin-top: 3vh;"  
+>
+    <!-- HEADER: logo + texto -->
+    <header class="w-full max-w-lg flex flex-col items-center">
+        <div class="logo-wrap">
+            <img loading="lazy" src="{{ asset('images/logo_upb.png') }}" alt="Logo UPB">
+        </div>
 
-    <a href="{{ route('carreras.index.public') }}">Continuar</a>
+        <p class="title"></p>
+        <p class="subtitle">“Formando profesionales con visión, liderazgo e innovación.”</p>
+    </header>
+
+    <!-- ESPACIO ENTRE LOGO Y BOTÓN -->
+    <!-- 🔧 Puedes jugar con 'mt-' si quieres más/menos espacio -->
+    <footer class="w-full max-w-lg mt-8 mb-4">
+        <a href="{{ route('carreras.index.public') }}" class="cta" role="button" aria-label="Continuar a carreras">
+            Continuar
+        </a>
+    </footer>
+</main>
 
 </body>
 </html>

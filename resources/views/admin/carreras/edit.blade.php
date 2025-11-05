@@ -72,7 +72,21 @@
 
         {{-- Videos actuales --}}
         <div>
-            <label class="block text-sm font-medium">Videos actuales</label>
+            {{-- Nuevo campo: URL YouTube --}}
+<div class="mt-2">
+    <label class="block text-sm font-medium">Enlace de Video (YouTube)</label>
+    <input type="url" name="video_url" value="{{ old('video_url', $carrera->multimedia()->where('tipo','video_url')->value('ruta')) }}" 
+        class="w-full border rounded p-2" placeholder="https://youtu.be/xyz123">
+
+    <p class="text-xs text-gray-500 mt-1">
+        Si agregas un enlace de YouTube, se mostrará en la página de la carrera.
+    </p>
+</div>
+
+{{-- MP4 opcional --}}
+<input type="file" name="videos[]" class="w-full border rounded p-2 mt-2" accept="video/mp4">
+<p class="text-xs text-gray-500">MP4 máximo 10MB</p>
+
             <div class="flex gap-2 flex-wrap mb-2 overflow-x-auto">
                 @foreach($carrera->videos()->get() as $video)
                     <div class="relative media-item">

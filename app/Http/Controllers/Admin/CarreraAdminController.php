@@ -42,7 +42,9 @@ class CarreraAdminController extends Controller
             'competencias' => 'nullable|string',
             'requisitos' => 'nullable|string',
             'imagenes.*' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
-            'videos.*'  => 'nullable|file|mimes:mp4,avi,mov|max:102400',
+           'video_url' => 'nullable|url',
+'videos.*' => 'nullable|file|mimes:mp4|max:10240', // máximo 10MB
+
         ]);
 
         $data = $request->except(['imagenes', 'videos']);
@@ -59,6 +61,16 @@ class CarreraAdminController extends Controller
                 ]);
             }
         }
+
+
+
+        // Guardar enlace YouTube
+if ($request->video_url) {
+    $carrera->multimedia()->create([
+        'tipo' => 'video_url',
+        'ruta' => $request->video_url,
+    ]);
+}
 
         // Guardar videos
         if ($request->hasFile('videos')) {
@@ -92,7 +104,9 @@ class CarreraAdminController extends Controller
             'competencias' => 'nullable|string',
             'requisitos' => 'nullable|string',
             'imagenes.*' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
-            'videos.*'  => 'nullable|file|mimes:mp4,avi,mov|max:102400',
+           'video_url' => 'nullable|url',
+'videos.*' => 'nullable|file|mimes:mp4|max:10240', // máximo 10MB
+
         ]);
 
         $data = $request->except(['imagenes', 'videos']);
@@ -109,6 +123,16 @@ class CarreraAdminController extends Controller
                 ]);
             }
         }
+
+        // Guardar enlace YouTube
+if ($request->video_url) {
+    $carrera->multimedia()->where('tipo','video_url')->delete(); // reemplazar si ya había
+    $carrera->multimedia()->create([
+        'tipo' => 'video_url',
+        'ruta' => $request->video_url,
+    ]);
+}
+
 
         // Agregar nuevos videos
         if ($request->hasFile('videos')) {

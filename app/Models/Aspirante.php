@@ -15,39 +15,23 @@ class Aspirante extends Model
         'nombre',
         'apellido_paterno',
         'apellido_materno',
-        'fecha_nacimiento',
-        'escuela_procedencia',
         'telefono',
         'email',
-        'password',
+        'escuela_procedencia',
         'status',
         'accepted_terms',
-        'carrera_principal_id', // 👈 AGREGA ESTO
+        'carrera_principal_id',
     ];
 
-    protected $hidden = [
-        'password',
-    ];
-
-    // Relación: un aspirante puede elegir varias carreras con prioridad
-    public function carreras()
-    {
-        return $this->belongsToMany(Carrera::class, 'aspirante_carrera')
-            ->withPivot('prioridad')
-            ->withTimestamps();
-    }
-
-    // Relación: carrera principal
+    // Relación: carrera principal elegida
     public function carreraPrincipal()
     {
         return $this->belongsTo(Carrera::class, 'carrera_principal_id');
     }
 
-    // Mutator: encripta la contraseña automáticamente
-    public function setPasswordAttribute($value)
+    // (Opcional) Relación si después quieres varias carreras
+    public function carreras()
     {
-        if (!empty($value)) {
-            $this->attributes['password'] = bcrypt($value);
-        }
+        return $this->belongsToMany(Carrera::class, 'aspirante_carrera')->withTimestamps();
     }
 }

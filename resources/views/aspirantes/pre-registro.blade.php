@@ -12,7 +12,7 @@
             @csrf
 
             <div>
-                <label class="block text-sm font-medium">Nombre</label>
+                <label class="block text-sm font-medium">Nombres</label>
                 <input type="text" name="nombre" class="w-full border rounded px-3 py-2" required>
             </div>
 
@@ -27,10 +27,6 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium">Fecha de nacimiento</label>
-                <input type="date" name="fecha_nacimiento" class="w-full border rounded px-3 py-2">
-            </div>
 
             <div>
                 <label class="block text-sm font-medium">Escuela de procedencia</label>
