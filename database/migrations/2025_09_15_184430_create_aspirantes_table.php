@@ -1,28 +1,44 @@
-<?php 
+<?php
 
-Schema::create('aspirantes', function (Blueprint $table) {
-    $table->id();
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-    $table->string('nombre');
-    $table->string('apellido_paterno');
-    $table->string('apellido_materno')->nullable();
-    $table->string('telefono')->nullable();
-    $table->string('email');
-    $table->string('escuela_procedencia')->nullable();
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::create('aspirantes', function (Blueprint $table) {
+            $table->id();
 
-    $table->enum('status', [
-        'proceso',
-        'contactado',
-        'registrado',
-        'no_registrado'
-    ])->default('proceso');
+            $table->string('nombre');
+            $table->string('apellido_paterno');
+            $table->string('apellido_materno')->nullable();
+            $table->string('telefono')->nullable();
+            $table->string('email');
+            $table->string('escuela_procedencia')->nullable();
 
-    $table->boolean('accepted_terms')->default(false);
+            $table->enum('status', [
+                'proceso',
+                'contactado',
+                'registrado',
+                'no_registrado'
+            ])->default('proceso');
 
-    // ✅ Guardamos la carrera elegida
-    $table->foreignId('carrera_principal_id')->nullable()
-          ->constrained('carreras')
-          ->nullOnDelete();
+            $table->boolean('accepted_terms')->default(false);
 
-    $table->timestamps();
-});
+            // ✅ Carrera elegida
+            $table->foreignId('carrera_principal_id')
+                  ->nullable()
+                  ->constrained('carreras')
+                  ->nullOnDelete();
+
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('aspirantes');
+    }
+};

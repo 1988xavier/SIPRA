@@ -13,36 +13,38 @@ use App\Models\HistorialContacto;
 class AspiranteAdminController extends Controller
 {
     public function index(Request $request)
-    {
-        $search    = $request->string('q')->toString();
-        $estado    = $request->string('estado')->toString();
-        $carreraId = $request->integer('carrera');
+{
+    $search    = $request->string('q')->toString();
+    $estado    = $request->string('estado')->toString();
+    $carreraId = $request->integer('carrera');
 
-        $query = Aspirante::query()->with(['carreraPrincipal' => function($q){ 
-            $q->select('id','nombre'); 
-        }]);
+    $query = Aspirante::query()->with(['carreraPrincipal' => function($q){ 
+        $q->select('id','nombre'); 
+    }]);
 
-        if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('nombre', 'like', "%{$search}%")
-                  ->orWhere('apellidos', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        if ($estado !== '') {
-            $query->where('status', $estado);
-        }
-
-        if ($carreraId) {
-            $query->where('carrera_principal_id', $carreraId);
-        }
-
-        $aspirantes = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
-        $carreras   = Carrera::orderBy('nombre')->get(['id','nombre']);
-
-        return view('admin.aspirantes.index', compact('aspirantes','carreras','search','estado','carreraId'));
+    // ✅ BÚSQUEDA CORRECTA
+    if ($search !== '') {
+        $query->where(function ($q) use ($search) {
+            $q->where('nombre', 'like', "%{$search}%")
+              ->orWhere('apellido_paterno', 'like', "%{$search}%")
+              ->orWhere('apellido_materno', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+        });
     }
+
+    if ($estado !== '') {
+        $query->where('status', $estado);
+    }
+
+    if ($carreraId) {
+        $query->where('carrera_principal_id', $carreraId);
+    }
+
+    $aspirantes = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
+    $carreras   = Carrera::orderBy('nombre')->get(['id','nombre']);
+
+    return view('admin.aspirantes.index', compact('aspirantes','carreras','search','estado','carreraId'));
+}
 
     // Crear aspirante
     public function store(Request $request)

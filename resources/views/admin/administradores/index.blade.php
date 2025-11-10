@@ -5,12 +5,18 @@
             <p class="text-sm text-gray-500">Gestiona los usuarios y coordinadores</p>
         </div>
 
-        {{-- 🔹 Solo el super admin puede agregar nuevos coordinadores --}}
         <a href="{{ route('admin.administradores.create') }}" 
            class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
            + Agregar Coordinador
         </a>
     </div>
+
+    {{-- ✅ Alerta de éxito --}}
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 px-4 py-3 rounded mb-4">
+            ✅ {{ session('success') }}
+        </div>
+    @endif
 
     {{-- Barra de búsqueda --}}
     <form method="GET" class="mb-4">
@@ -34,6 +40,7 @@
                     <th class="px-4 py-3 text-center">Acciones</th>
                 </tr>
             </thead>
+
             <tbody class="divide-y divide-gray-100">
                 @forelse($administradores as $admin)
                     <tr class="hover:bg-gray-50">
@@ -46,12 +53,10 @@
                         {{-- Estado --}}
                         <td class="px-4 py-3 text-center">
                             @if($admin->role === 'admin')
-                                {{-- 🔹 Mostrar solo texto para el super admin --}}
                                 <span class="text-green-700 bg-green-100 px-2 py-1 rounded text-xs border border-green-400">
                                     Activo
                                 </span>
                             @else
-                                {{-- 🔹 Selector para coordinadores --}}
                                 <form action="{{ route('admin.administradores.updateEstado', $admin->id) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
@@ -69,22 +74,24 @@
 
                         {{-- Acciones --}}
                         <td class="px-4 py-3 text-center space-x-3">
-                            @if($admin->role === 'admin')
-                                {{-- 🚫 Sin acciones para el super admin --}}
-                                <span class="text-gray-400 text-xs italic">No disponible</span>
-                            @else
-                                {{-- 🔹 Coordinadores sí pueden eliminarse --}}
-                                <form action="{{ route('admin.administradores.destroy', $admin->id) }}" 
-                                      method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:underline"
-                                            onclick="return confirm('¿Seguro que deseas eliminar este coordinador?')">
-                                        Eliminar
-                                    </button>
-                                </form>
-                            @endif
-                        </td>
+    @if($admin->role === 'admin')
+        <span class="text-gray-400 text-xs italic">No disponible</span>
+    @else
+        <form action="{{ route('admin.administradores.destroy', ['administradore' => $admin->id]) }}" 
+      method="POST" class="inline delete-form">
+    @csrf
+    @method('DELETE')
+
+    <button type="submit" 
+            class="text-red-600 hover:underline delete-btn"
+            data-name="{{ $admin->name }}">
+        Eliminar
+    </button>
+</form>
+
+    @endif
+</td>
+
                     </tr>
                 @empty
                     <tr>
@@ -94,11 +101,29 @@
                     </tr>
                 @endforelse
             </tbody>
+
         </table>
     </div>
 
-    {{-- Paginación --}}
     <div class="mt-4">
         {{ $administradores->links() }}
     </div>
+
 </x-admin-layout>
+
+{{-- ✅ Script para confirmación antes de eliminar --}}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".delete-form").forEach(form => {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let name = this.querySelector(".delete-btn").dataset.name;
+
+            if (confirm(`¿Seguro que deseas eliminar al coordinador:\n\n${name}?`)) {
+                this.submit();
+            }
+        });
+    });
+});
+</script>

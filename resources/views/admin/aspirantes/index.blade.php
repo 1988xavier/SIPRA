@@ -14,7 +14,8 @@
     <form method="GET" class="flex flex-wrap gap-3 items-center mb-4">
         <div class="relative flex-1 min-w-[240px]">
             <span class="absolute left-3 top-2.5 text-gray-400">🔎</span>
-            <input type="text" name="q" value="{{ $search ?? '' }}" placeholder="Buscar por nombre o correo"
+            <input type="text" name="q" value="{{ $search ?? '' }}" placeholder="Buscar por nombre o apellido"
+
                    class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-300 focus:ring-blue-200 focus:border-blue-500">
         </div>
 
@@ -26,15 +27,14 @@
         </select>
 
         <select name="estado" class="rounded-full border-gray-300 focus:ring-blue-200 focus:border-blue-500">
-            <option value="">Estado</option>
-            <option value="registrado"  @selected(($estado ?? '') === 'registrado')>Registrado</option>
-            <option value="proceso"     @selected(($estado ?? '') === 'proceso')>En revisión</option>
-            <option value="aceptado"    @selected(($estado ?? '') === 'aceptado')>Aceptado</option>
-            <option value="rechazado"   @selected(($estado ?? '') === 'rechazado')>No aceptado</option>
-        </select>
+    <option value="">Estado</option>
+    <option value="proceso"        @selected(($estado ?? '') === 'proceso')>Proceso</option>
+    <option value="contactado"     @selected(($estado ?? '') === 'contactado')>Contactado</option>
+    <option value="registrado"     @selected(($estado ?? '') === 'registrado')>Registrado</option>
+    <option value="no_registrado"  @selected(($estado ?? '') === 'no_registrado')>No registrado</option>
+</select>
 
-        <button class="rounded-full px-4 py-2 bg-blue-600 text-white hover:bg-blue-700">Aplicar</button>
-        <a href="{{ route('admin.aspirantes.index') }}" class="rounded-full px-4 py-2 bg-gray-200 hover:bg-gray-300">Limpiar</a>
+        
     </form>
 
     {{-- Tabla estilo Excel --}}
@@ -256,4 +256,48 @@
             });
         });
     </script>
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.querySelector('input[name="q"]');
+    const carreraSelect = document.querySelector('select[name="carrera"]');
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    const tableBody = document.querySelector("tbody");
+
+    function fetchResults() {
+        const q = searchInput.value;
+        const carrera = carreraSelect.value;
+        const estado = estadoSelect.value;
+
+        fetch(`{{ route('admin.aspirantes.index') }}?q=${q}&carrera=${carrera}&estado=${estado}`)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+
+                const newTbody = doc.querySelector("tbody");
+                const pagination = doc.querySelector(".mt-4");
+
+                tableBody.innerHTML = newTbody.innerHTML;
+
+                // Actualizar paginación
+                document.querySelector(".mt-4").innerHTML = pagination.innerHTML;
+            });
+    }
+
+    // ✅ Búsqueda en vivo
+    searchInput.addEventListener("input", () => {
+        clearTimeout(window.searchDelay);
+        window.searchDelay = setTimeout(fetchResults, 300);
+    });
+
+    // ✅ Filtrado automático en selects
+    carreraSelect.addEventListener("change", fetchResults);
+    estadoSelect.addEventListener("change", fetchResults);
+});
+</script>
+
 </x-admin-layout>

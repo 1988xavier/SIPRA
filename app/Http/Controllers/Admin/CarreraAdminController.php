@@ -42,13 +42,17 @@ class CarreraAdminController extends Controller
             'competencias' => 'nullable|string',
             'requisitos' => 'nullable|string',
             'imagenes.*' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
-           'video_url' => 'nullable|url',
-'videos.*' => 'nullable|file|mimes:mp4|max:10240', // máximo 10MB
-
+            'video_url' => 'nullable|url',
+            'facebook' => 'nullable|string|max:255',
+            'tiktok' => 'nullable|string|max:255',
+            'videos.*' => 'nullable|file|mimes:mp4|max:10240',
         ]);
 
         $data = $request->except(['imagenes', 'videos']);
         $data['slug'] = Str::slug($request->nombre);
+        $data['facebook'] = $request->facebook;
+        $data['tiktok'] = $request->tiktok;
+
         $carrera = Carrera::create($data);
 
         // Guardar imágenes
@@ -62,17 +66,15 @@ class CarreraAdminController extends Controller
             }
         }
 
-
-
         // Guardar enlace YouTube
-if ($request->video_url) {
-    $carrera->multimedia()->create([
-        'tipo' => 'video_url',
-        'ruta' => $request->video_url,
-    ]);
-}
+        if ($request->video_url) {
+            $carrera->multimedia()->create([
+                'tipo' => 'video_url',
+                'ruta' => $request->video_url,
+            ]);
+        }
 
-        // Guardar videos
+        // Guardar videos MP4
         if ($request->hasFile('videos')) {
             foreach ($request->file('videos') as $file) {
                 $ruta = $file->store('carreras/videos', 'public');
@@ -104,13 +106,17 @@ if ($request->video_url) {
             'competencias' => 'nullable|string',
             'requisitos' => 'nullable|string',
             'imagenes.*' => 'nullable|file|mimes:jpg,jpeg,png|max:61440',
-           'video_url' => 'nullable|url',
-'videos.*' => 'nullable|file|mimes:mp4|max:10240', // máximo 10MB
-
+            'video_url' => 'nullable|url',
+            'facebook' => 'nullable|string|max:255',
+            'tiktok' => 'nullable|string|max:255',
+            'videos.*' => 'nullable|file|mimes:mp4|max:10240',
         ]);
 
         $data = $request->except(['imagenes', 'videos']);
         $data['slug'] = Str::slug($request->nombre);
+        $data['facebook'] = $request->facebook;
+        $data['tiktok'] = $request->tiktok;
+
         $carrera->update($data);
 
         // Agregar nuevas imágenes
@@ -124,17 +130,16 @@ if ($request->video_url) {
             }
         }
 
-        // Guardar enlace YouTube
-if ($request->video_url) {
-    $carrera->multimedia()->where('tipo','video_url')->delete(); // reemplazar si ya había
-    $carrera->multimedia()->create([
-        'tipo' => 'video_url',
-        'ruta' => $request->video_url,
-    ]);
-}
+        // Guardar enlace YouTube (reemplazar si existe)
+        if ($request->video_url) {
+            $carrera->multimedia()->where('tipo', 'video_url')->delete();
+            $carrera->multimedia()->create([
+                'tipo' => 'video_url',
+                'ruta' => $request->video_url,
+            ]);
+        }
 
-
-        // Agregar nuevos videos
+        // Agregar nuevos videos MP4
         if ($request->hasFile('videos')) {
             foreach ($request->file('videos') as $file) {
                 $ruta = $file->store('carreras/videos', 'public');
@@ -150,7 +155,6 @@ if ($request->video_url) {
 
     public function destroy(Carrera $carrera)
     {
-        // Opcional: eliminar archivos físicos
         foreach ($carrera->multimedia as $media) {
             Storage::disk('public')->delete($media->ruta);
         }
@@ -159,19 +163,11 @@ if ($request->video_url) {
         return redirect()->route('admin.carreras.index')->with('success', 'Carrera eliminada correctamente');
     }
 
-
-
-    // Eliminar una imagen o video individual
     public function destroyMultimedia(CarreraMultimedia $media)
     {
-        // Eliminar el archivo físico
         Storage::disk('public')->delete($media->ruta);
-
-        // Eliminar registro de la base de datos
         $media->delete();
 
-        // Respuesta JSON para AJAX
         return response()->json(['success' => true]);
     }
-
 }

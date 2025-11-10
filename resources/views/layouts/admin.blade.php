@@ -39,7 +39,7 @@
         📊 <span>Reportes</span>
     </a>
     <a href="{{ route('admin.calendario.index') }}" class="flex items-center gap-2 hover:text-blue-600">
-        🗓️ <span>Calendario</span>
+        🗓️ <span>Calendario Promoción</span>
     </a>
     <a href="{{ route('admin.calendario_aspirantes.index') }}" class="flex items-center gap-2 hover:text-blue-600">
     📅 <span>Calendario de Aspirantes</span>
@@ -78,26 +78,14 @@
                 <!-- Barra de iconos -->
                 <div class="flex items-center gap-4">
                     <!-- Notificaciones -->
-                    <button class="rounded-full w-10 h-10 flex items-center justify-center bg-white shadow hover:bg-gray-100">
-                        🔔
-                    </button>
-
+                    
                     <!-- Usuario con dropdown -->
                     <div class="relative group">
                         <button class="flex items-center gap-2 rounded-full px-3 py-2 bg-white shadow hover:bg-gray-100">
                             👤 <span class="text-gray-700 font-medium">{{ Auth::user()->name ?? 'Usuario' }}</span>
                         </button>
 
-                        <!-- Menú desplegable -->
-                        <div class="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg hidden group-hover:block">
-                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Perfil</a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
-                                    Cerrar sesión
-                                </button>
-                            </form>
-                        </div>
+                       
                     </div>
                 </div>
             </div>

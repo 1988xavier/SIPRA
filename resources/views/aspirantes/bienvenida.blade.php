@@ -13,6 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
+
+        /* ✅ Fondo general */
+        body {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)),
+                url('{{ asset("images/fondo.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
+        }
+
         @keyframes fadeIn { 
             from { opacity: 0; transform: translateY(6px);} 
             to { opacity:1; transform:translateY(0);} 
@@ -30,8 +39,8 @@
         }
 
         .logo-wrap img {
-            width: 90vw;       /* más grande en móvil */
-            max-width: 320px;  /* tamaño grande en desktops */
+            width: 90vw;       
+            max-width: 320px;
             height: auto;
             display: block;
             animation: fadeIn .6s ease both;
@@ -44,6 +53,7 @@
             font-size: 1.05rem;
             text-align: center;
         }
+
         .subtitle {
             margin-top: .45rem;
             color: #0f2b4a;
@@ -51,6 +61,7 @@
             opacity: .95;
             font-size: .95rem;
         }
+
         .cta {
             display:block;
             width:100%;
@@ -65,6 +76,26 @@
             text-decoration: none;
             box-shadow: 0 10px 30px rgba(0,50,102,0.14);
         }
+
+
+
+    main::before {
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:40vh;
+    background:linear-gradient(to bottom, rgba(255,255,255,0.32), rgba(255,255,255,0));
+    pointer-events:none;
+    z-index:1;
+}
+main {
+    position:relative;
+    z-index:2;
+}
+
+
     </style>
 </head>
 
@@ -81,11 +112,9 @@
         </div>
 
         <p class="title"></p>
-        <p class="subtitle">“Formando profesionales con visión, liderazgo e innovación.”</p>
+        <p class="subtitle">“Formando Triunfadores”</p>
     </header>
 
-    <!-- ESPACIO ENTRE LOGO Y BOTÓN -->
-    <!-- 🔧 Puedes jugar con 'mt-' si quieres más/menos espacio -->
     <footer class="w-full max-w-lg mt-8 mb-4">
         <a href="{{ route('carreras.index.public') }}" class="cta" role="button" aria-label="Continuar a carreras">
             Continuar

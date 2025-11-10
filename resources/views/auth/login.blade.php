@@ -1,9 +1,15 @@
 <!-- resources/views/auth/login_admin.blade.php -->
 
-<!-- Contenedor externo con degradado radial elegante -->
+<!-- Contenedor externo con fondo + degradado -->
 <div class="min-h-screen w-full flex items-center justify-center"
-     style="background: radial-gradient(circle, #89bcfaff 0%, #93c5fd 50%, #ffffff 150%);">
-     
+     style="
+        background-image: url('{{ asset('images/fondo.jpg') }}'),
+                          radial-gradient(circle, #89bcfaff 0%, #93c5fd 50%, #ffffff 150%);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+     ">
+
     <x-guest-layout>
         <!-- Login intacto -->
         <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">SIPRA</h1>

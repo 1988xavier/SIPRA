@@ -76,15 +76,17 @@ class AdministradorController extends Controller
         return back()->with('success', 'Estado actualizado correctamente.');
     }
 
-    public function destroy(User $user)
-    {
-        // 🚫 No permitir eliminar al Super Administrador (role=admin)
-        if ($user->role === 'admin') {
-            return back()->withErrors(['error' => 'No puedes eliminar al Super Administrador.']);
-        }
-
-        $user->delete();
-
-        return back()->with('success', 'Coordinador eliminado correctamente.');
+    public function destroy(User $administradore)
+{
+    // No permitir eliminar al super admin
+    if ($administradore->role === 'admin') {
+        return back()->withErrors(['error' => 'No puedes eliminar al Super Administrador.']);
     }
+
+    // Eliminar coordinador
+    $administradore->delete();
+
+    return back()->with('success', 'Coordinador eliminado correctamente.');
+}
+
 }

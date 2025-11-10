@@ -117,6 +117,30 @@ button:hover {
         </div>
     @endif
 
+<!-- ✅ Botón regresar estilo UPB -->
+<a href="{{ url()->previous() }}" 
+   style="
+       position:absolute;
+       right:20px;
+       top:20px;
+       background:#003366;
+       width:38px;
+       height:38px;
+       border-radius:8px;
+       display:flex;
+       align-items:center;
+       justify-content:center;
+       text-decoration:none;
+       box-shadow:0 3px 8px rgba(0,0,0,0.25);
+       transition:.25s;
+   ">
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width="20" height="20" fill="#fff">
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+    </svg>
+</a>
+
+
+
     {{-- INFO --}}
     <h2>Pre-registro</h2>
     <div class="info-box">
@@ -147,7 +171,10 @@ button:hover {
         <input type="text" name="escuela_procedencia" placeholder="Ej. CBTIS 214, Bachilleres..." required>
 
         <p class="footer-text">
-            Al continuar aceptas nuestro <a href="#" style="color:#0057B8;">Aviso de privacidad</a>.
+            Al continuar aceptas nuestro <a href="#" style="color:#0057B8;"><a href="{{ route('aviso.privacidad') }}" style="color:#0057B8;" target="_blank">
+    Aviso de privacidad
+</a>
+</a>.
         </p>
 
         <button type="submit">Enviar pre-registro</button>

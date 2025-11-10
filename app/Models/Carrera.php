@@ -19,6 +19,8 @@ class Carrera extends Model
         'requisitos',
         'capacidad',
         'vistas',
+        'facebook',
+        'tiktok',
         'activo',
     ];
 
