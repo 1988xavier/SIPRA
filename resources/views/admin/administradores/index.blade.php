@@ -6,8 +6,8 @@
         </div>
 
         <a href="{{ route('admin.administradores.create') }}" 
-           class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
-           + Agregar Coordinador
+        class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+        + Agregar Coordinador
         </a>
     </div>
 
@@ -23,8 +23,8 @@
         <div class="relative max-w-md">
             <span class="absolute left-3 top-2.5 text-gray-400">🔎</span>
             <input type="text" name="q" value="{{ $search ?? '' }}" 
-                   placeholder="Buscar por nombre o correo"
-                   class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-300 focus:ring-blue-200 focus:border-blue-500">
+                placeholder="Buscar por nombre o correo"
+                class="w-full pl-9 pr-3 py-2 rounded-full border border-gray-300 focus:ring-blue-200 focus:border-blue-500">
         </div>
     </form>
 

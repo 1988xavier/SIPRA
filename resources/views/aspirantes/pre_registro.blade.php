@@ -142,9 +142,9 @@ button:hover {
 
 
     {{-- INFO --}}
-    <h2>Pre-registro</h2>
+    <h2>Prerregistro</h2>
     <div class="info-box">
-        Estás a punto de iniciar tu proceso de pre-registro para la carrera:
+        Estás a punto de iniciar tu proceso de prerregistro para la carrera:
         <strong>{{ $carrera->nombre }}</strong>
     </div>
 

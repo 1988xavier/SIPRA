@@ -18,11 +18,11 @@
             <nav class="p-6 space-y-3 text-gray-700">
                 {{-- Dashboard: todos pueden verlo --}}
                 <a href="{{ route('dashboard') }}"
-                   class="flex items-center gap-2 px-2 py-1 rounded-md {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:text-blue-600' }}">
+                class="flex items-center gap-2 px-2 py-1 rounded-md {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:text-blue-600' }}">
                     <span class="inline-block w-5 text-center">🏠</span> <span>Dashboard</span>
                 </a>
 
-           
+    
 
                 {{-- Módulos visibles según el rol --}}
 @if(Auth::user()->role === 'admin')

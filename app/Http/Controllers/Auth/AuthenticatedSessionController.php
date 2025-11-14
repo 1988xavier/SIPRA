@@ -22,30 +22,37 @@ class AuthenticatedSessionController extends Controller
     /**
      * Manejar una solicitud de autenticación.
      */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-        $request->authenticate();
-
-        $request->session()->regenerate();
-
-        $user = Auth::user();
-
-        // 🚨 Bloquear si está inactivo
-        if ($user->status === 'inactivo') {
-            Auth::logout();
-            return back()->withErrors([
-                'email' => 'Tu cuenta está inactiva. Contacta al administrador.',
-            ]);
-        }
-
-        // Redirección según el rol
-        if ($user->role === 'admin') {
-            return redirect()->intended('/admin/carreras'); // 👈 cambia aquí a donde quieras que entre el admin
-        }
-
-        // Aspirantes → Carreras
-        return redirect()->intended('/dashboard');
+  public function store(LoginRequest $request): RedirectResponse
+{
+    // 🔐 Intentar autenticar con mensaje personalizado
+    if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        return back()
+            ->withErrors(['email' => 'Correo o contraseña incorrectos.'])
+            ->withInput($request->only('email'));
     }
+
+    // Regenerar sesión después de un login exitoso
+    $request->session()->regenerate();
+
+    $user = Auth::user();
+
+    // 🚨 Bloquear si está inactivo
+    if ($user->status === 'inactivo') {
+        Auth::logout();
+        return back()->withErrors([
+            'email' => 'Tu cuenta está inactiva. Contacta al administrador.',
+        ]);
+    }
+
+    // Redirección según el rol
+    if ($user->role === 'admin') {
+        return redirect()->intended('/admin/carreras'); // 👈 admin entra aquí
+    }
+
+    // Otros roles → dashboard
+    return redirect()->intended('/dashboard');
+}
+
 
 
     /**

@@ -31,6 +31,15 @@
                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 
+@if ($errors->any())
+    <div class="bg-red-100 text-red-800 px-4 py-3 rounded mb-4 text-sm">
+        ⚠️ {{ $errors->first() }}
+    </div>
+@endif
+
+
+
+
             <!-- Botón -->
             <div class="mt-6">
                 <button type="submit"
