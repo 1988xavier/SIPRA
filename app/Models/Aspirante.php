@@ -21,6 +21,7 @@ class Aspirante extends Model
         'status',
         'accepted_terms',
         'carrera_principal_id',
+          'ciclo_id', // ← ← ← AQUI ESTABA EL PROBLEMA
     ];
 
     // Relación: carrera principal elegida

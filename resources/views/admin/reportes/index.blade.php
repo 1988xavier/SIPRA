@@ -80,20 +80,28 @@
             </div>
         </div>
 
-        {{-- 🔹 Tabla de aspirantes --}}
-        @php
-            $aspirantesQuery = \App\Models\Aspirante::with('carreraPrincipal')->orderBy('created_at','desc');
+       {{-- 🔹 Tabla de aspirantes --}}
+@php
+    // Ciclo activo
+    $cicloActivo = \App\Models\CicloPromocion::where('estado', 'activo')->first();
 
-            if (request('carrera_id')) {
-                $aspirantesQuery->where('carrera_principal_id', request('carrera_id'));
-            }
+    $aspirantesQuery = \App\Models\Aspirante::with('carreraPrincipal')
+        ->when($cicloActivo, function ($q) use ($cicloActivo) {
+            $q->where('ciclo_id', $cicloActivo->id);
+        })
+        ->orderBy('created_at','desc');
 
-            if (request('estado')) {
-                $aspirantesQuery->where('status', request('estado'));
-            }
+    if (request('carrera_id')) {
+        $aspirantesQuery->where('carrera_principal_id', request('carrera_id'));
+    }
 
-            $aspirantes = $aspirantesQuery->get();
-        @endphp
+    if (request('estado')) {
+        $aspirantesQuery->where('status', request('estado'));
+    }
+
+    $aspirantes = $aspirantesQuery->get();
+@endphp
+
 
         <div class="overflow-x-auto bg-white rounded-lg shadow">
             <table class="min-w-full text-sm">

@@ -184,4 +184,25 @@ Route::get('/aviso-privacidad', function () {
 })->name('aviso.privacidad');
 
 
+
+
+
+
+
+// Ciclos de promoción
+Route::get('/ciclos/historial', [App\Http\Controllers\CicloPromocionController::class, 'historial'])
+    ->name('ciclos.historial');
+
+Route::get('/ciclos/{id}', [App\Http\Controllers\CicloPromocionController::class, 'verCiclo'])
+    ->name('ciclos.detalle');
+
+// Acciones
+Route::post('/ciclos/iniciar', [App\Http\Controllers\CicloPromocionController::class, 'iniciarCiclo'])
+    ->name('ciclos.iniciar');
+
+Route::post('/ciclos/cerrar', [App\Http\Controllers\CicloPromocionController::class, 'cerrarCiclo'])
+    ->name('ciclos.cerrar');
+
+
+
 require __DIR__.'/auth.php';

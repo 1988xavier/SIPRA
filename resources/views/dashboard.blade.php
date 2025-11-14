@@ -1,5 +1,45 @@
 <x-admin-layout> 
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Panel de Control</h1>
+
+    <div class="flex justify-between items-center mb-6">
+        <!-- Título -->
+        <h1 class="text-2xl font-bold text-gray-800">Panel de Control</h1>
+
+        <!-- Botones del ciclo -->
+        <div>
+            @php
+                $cicloActivo = \App\Models\CicloPromocion::where('estado', 'activo')->first();
+            @endphp
+
+            @if(!$cicloActivo)
+                <form action="{{ route('ciclos.iniciar') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Iniciar promoción académica
+                    </button>
+                </form>
+            @endif
+
+            @if($cicloActivo)
+                <form action="{{ route('ciclos.cerrar') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                        Cerrar promoción académica (Ciclo {{ $cicloActivo->anio }})
+                    </button>
+                </form>
+            @endif
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- Tarjetas de resumen -->
     <div class="grid grid-cols-4 gap-6 mb-8">

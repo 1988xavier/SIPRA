@@ -174,7 +174,13 @@ button:hover {
             Al continuar aceptas nuestro <a href="#" style="color:#0057B8;"><a href="{{ route('aviso.privacidad') }}" style="color:#0057B8;" target="_blank">
     Aviso de privacidad
 </a>
-</a>.
+</a>
+@php
+    $cicloActivo = \App\Models\CicloPromocion::where('estado', 'activo')->first();
+@endphp
+
+<input type="hidden" name="ciclo_id" value="{{ $cicloActivo->id ?? '' }}">
+
         </p>
 
         <button type="submit">Enviar pre-registro</button>

@@ -57,6 +57,27 @@
 
 
 
+<li>
+    <a href="{{ route('ciclos.historial') }}"
+        class="flex items-center gap-2 px-4 py-2 rounded hover:bg-gray-200">
+        
+        <!-- Icono -->
+        <svg xmlns="http://www.w3.org/2000/svg" 
+             fill="none" viewBox="0 0 24 24" 
+             stroke-width="1.5" stroke="currentColor" 
+             class="w-5 h-5 text-gray-700">
+            <path stroke-linecap="round" stroke-linejoin="round" 
+                  d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+        </svg>
+
+        <!-- Texto -->
+        Historial
+    </a>
+</li>
+
+
+
+
                 {{-- Cerrar sesión --}}
                 <form method="POST" action="{{ route('logout') }}" class="pt-6">
                     @csrf

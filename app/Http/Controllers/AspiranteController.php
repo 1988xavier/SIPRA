@@ -14,42 +14,46 @@ class AspiranteController extends Controller
         return view('aspirantes.pre-registro', compact('carreras'));
     }
 
-    public function store(Request $request)
-    {
-        // Validación
-        $request->validate([
-            'nombre'               => 'required|string|max:100',
-            'apellido_paterno'     => 'required|string|max:100',
-            'apellido_materno'     => 'nullable|string|max:100',
-            'telefono'             => 'required|string|max:20',
-            'email'                => 'required|email',
-            'carrera_principal_id' => 'required|exists:carreras,id',
-            'destacamientos'       => 'nullable|string',
-        ]);
+   public function store(Request $request)
+{
+    // Validación
+    $request->validate([
+        'nombre'               => 'required|string|max:100',
+        'apellido_paterno'     => 'required|string|max:100',
+        'apellido_materno'     => 'nullable|string|max:100',
+        'telefono'             => 'required|string|max:20',
+        'email'                => 'required|email',
+        'carrera_principal_id' => 'required|exists:carreras,id',
+        'destacamientos'       => 'nullable|string',
+    ]);
 
-        // Verificar si el correo ya se ha usado 3 veces
-        $count = Aspirante::where('email', $request->email)->count();
+    // OBTENER CICLO ACTIVO (FALTABA ESTO)
+    $cicloActivo = \App\Models\CicloPromocion::where('estado', 'activo')->first();
 
-        if ($count >= 3) {
-            return back()->with('error', 'Ya has registrado el máximo de 3 carreras permitidas.')->withInput();
-        }
-
-        // Crear aspirante sin contraseña
-        $aspirante = Aspirante::create([
-            'nombre'               => $request->nombre,
-            'apellido_paterno'     => $request->apellido_paterno,
-            'apellido_materno'     => $request->apellido_materno,
-            'telefono'             => $request->telefono,
-            'email'                => $request->email,
-            'carrera_principal_id' => $request->carrera_principal_id,
-            'destacamientos'       => $request->destacamientos,
-            'status'               => 'proceso',
-            'accepted_terms'       => true,
-        ]);
-
-        return redirect()->route('admin.aspirantes.create')
-                         ->with('success', 'El aspirante se ha registrado correctamente.');
+    // Verificar si el correo ya se ha usado 3 veces
+    $count = Aspirante::where('email', $request->email)->count();
+    if ($count >= 3) {
+        return back()->with('error', 'Ya has registrado el máximo de 3 carreras permitidas.')->withInput();
     }
+
+    // Crear aspirante y ASIGNAR ciclo_id correctamente
+    $aspirante = Aspirante::create([
+        'nombre'               => $request->nombre,
+        'apellido_paterno'     => $request->apellido_paterno,
+        'apellido_materno'     => $request->apellido_materno,
+        'telefono'             => $request->telefono,
+        'email'                => $request->email,
+        'carrera_principal_id' => $request->carrera_principal_id,
+        'destacamientos'       => $request->destacamientos,
+        'status'               => 'proceso',
+        'accepted_terms'       => true,
+        'ciclo_id'             => $cicloActivo->id ?? null, // ← AHORA SÍ FUNCIONA
+    ]);
+
+    return redirect()->route('admin.aspirantes.create')
+                     ->with('success', 'El aspirante se ha registrado correctamente.');
+}
+
 
 
 
@@ -73,6 +77,9 @@ public function guardar(Request $request)
         'carrera_principal_id' => 'required|exists:carreras,id',
     ]);
 
+    // OBTENER EL CICLO ACTIVO
+    $cicloActivo = \App\Models\CicloPromocion::where('estado', 'activo')->first();
+
     Aspirante::create([
         'nombre' => $request->nombre,
         'apellido_paterno' => $request->apellido_paterno,
@@ -83,12 +90,12 @@ public function guardar(Request $request)
         'carrera_principal_id' => $request->carrera_principal_id,
         'status' => 'proceso',
         'accepted_terms' => true,
+        'ciclo_id' => $cicloActivo->id ?? null,  // ← AQUI LO ASIGNAMOS
     ]);
 
-   return redirect()->route('pre.registro.exito');
-
-
+    return redirect()->route('pre.registro.exito');
 }
+
 
 public function exito()
 {

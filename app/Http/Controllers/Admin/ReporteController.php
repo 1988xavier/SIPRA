@@ -17,7 +17,14 @@ class ReporteController extends Controller
         $estado = $request->input('estado');
 
         // Construimos la consulta con filtros dinámicos
-        $aspirantesQuery = Aspirante::with('carreraPrincipal')->orderBy('created_at', 'desc');
+       $cicloActivo = \App\Models\CicloPromocion::where('estado', 'activo')->first();
+
+$aspirantesQuery = Aspirante::with('carreraPrincipal')
+    ->when($cicloActivo, function ($q) use ($cicloActivo) {
+        $q->where('ciclo_id', $cicloActivo->id);
+    })
+    ->orderBy('created_at', 'desc');
+
 
         if ($carreraId) {
             $aspirantesQuery->where('carrera_principal_id', $carreraId);
@@ -44,7 +51,14 @@ class ReporteController extends Controller
         }
 
         // Filtro aplicado también al Excel exportado
-        $query = Aspirante::with('carreraPrincipal')->orderBy('created_at', 'desc');
+       $cicloActivo = \App\Models\CicloPromocion::where('estado', 'activo')->first();
+
+$query = Aspirante::with('carreraPrincipal')
+    ->when($cicloActivo, function ($q) use ($cicloActivo) {
+        $q->where('ciclo_id', $cicloActivo->id);
+    })
+    ->orderBy('created_at', 'desc');
+
 
         if ($carreraId) {
             $query->where('carrera_principal_id', $carreraId);
